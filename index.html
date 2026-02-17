@@ -1,287 +1,765 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jedi Law Report Generator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jedi Law Report Generator</title>
 
-<style>
-:root{
-  /* ===== JEDI COUNCIL GOLD THEME ===== */
-  --bg0:#120b02;
-  --bg1:#2a1b04;
-  --bg2:#3a2806;
+  <style>
+    :root{
+      /* ===== JEDI COUNCIL GOLD / ARCHIVE TERMINAL ===== */
+      --bg0:#120b02;
+      --bg1:#2a1b04;
+      --bg2:#3a2806;
 
-  --panel:rgba(40,28,10,.55);
-  --panel2:rgba(40,28,10,.35);
+      --panel:rgba(26,18,7,.62);
+      --panel2:rgba(26,18,7,.40);
 
-  --text:#fff6e3;
-  --muted:#e6c98a;
+      --text:#fff6e6;
+      --muted:#e7cf9b;
 
-  --line:rgba(255,215,140,.20);
-  --line2:rgba(255,215,140,.10);
+      --line:rgba(255,215,140,.22);
+      --line2:rgba(255,215,140,.12);
 
-  --accent:#ffd36f;
-  --accent2:#fff0c2;
+      --gold:#ffd36f;
+      --gold2:#fff0c2;
 
-  --shadow:0 18px 50px rgba(0,0,0,.45);
-}
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --soft: 0 0 0 1px rgba(255,215,140,.08);
+    }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,Segoe UI,Roboto,Arial;
-  color:var(--text);
-  min-height:100vh;
+    *{box-sizing:border-box}
+    html,body{height:100%}
 
-  background:
-    radial-gradient(1100px 620px at 12% 0%, rgba(255,210,100,.25) 0%, transparent 60%),
-    radial-gradient(900px 580px at 100% 28%, rgba(255,185,60,.20) 0%, transparent 55%),
-    radial-gradient(900px 520px at 55% 110%, rgba(255,160,40,.18) 0%, transparent 60%),
-    linear-gradient(160deg, var(--bg0), var(--bg1) 55%, var(--bg2));
-}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 620px at 12% 0%, rgba(255,210,100,.26) 0%, transparent 62%),
+        radial-gradient(900px 560px at 100% 28%, rgba(255,185,60,.20) 0%, transparent 58%),
+        radial-gradient(900px 520px at 55% 110%, rgba(255,160,40,.18) 0%, transparent 60%),
+        linear-gradient(160deg, var(--bg0), var(--bg1) 58%, var(--bg2));
+      overflow-x:hidden;
+    }
 
-/* subtle stars */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.35;
-  background:
-    radial-gradient(1px 1px at 12% 22%, #fff 40%, transparent 42%),
-    radial-gradient(1px 1px at 82% 18%, #fff 40%, transparent 42%),
-    radial-gradient(1px 1px at 64% 70%, #fff 40%, transparent 42%),
-    radial-gradient(1px 1px at 25% 78%, #fff 40%, transparent 42%);
-}
+    /* subtle star field (CSS-only) */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.28;
+      background:
+        radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,.7) 40%, transparent 42%),
+        radial-gradient(1px 1px at 82% 18%, rgba(255,255,255,.55) 40%, transparent 42%),
+        radial-gradient(1px 1px at 64% 70%, rgba(255,255,255,.45) 40%, transparent 42%),
+        radial-gradient(1px 1px at 25% 78%, rgba(255,255,255,.55) 40%, transparent 42%),
+        radial-gradient(1px 1px at 48% 44%, rgba(255,255,255,.40) 40%, transparent 42%),
+        radial-gradient(1px 1px at 92% 62%, rgba(255,255,255,.35) 40%, transparent 42%);
+      filter: blur(.2px);
+    }
 
-header{
-  max-width:1100px;
-  margin:auto;
-  padding:28px 18px 10px;
-}
+    header{
+      max-width:1140px;
+      margin:0 auto;
+      padding:28px 18px 10px;
+      position:relative;
+    }
 
-h1{margin:0;font-size:22px}
-.sub{margin-top:6px;color:var(--muted)}
+    .titlebar{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
 
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:16px;
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
-  gap:14px;
-}
-@media(max-width:980px){.wrap{grid-template-columns:1fr}}
+    h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
 
-.card{
-  background:linear-gradient(180deg,var(--panel),var(--panel2));
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
+    .badge{
+      font-size:11px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,211,111,.08);
+      color: var(--gold2);
+      box-shadow: 0 0 26px rgba(255,211,111,.10);
+      white-space:nowrap;
+    }
 
-.hd{
-  padding:14px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-}
+    p.sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width:980px;
+    }
 
-.bd{padding:14px}
+    .wrap{
+      max-width:1140px;
+      margin:0 auto;
+      padding:14px 18px 34px;
+      display:grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr}
+    }
 
-label{font-size:12px;color:var(--muted)}
-input,textarea{
-  width:100%;
-  padding:10px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,.25);
-  color:var(--text);
-}
-textarea{min-height:90px}
+    /* ===== Cards ===== */
+    .card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      box-shadow: var(--shadow);
+      position:relative;
+      backdrop-filter: blur(6px);
+    }
 
-.btn{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  padding:8px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  margin-top:10px;
-}
-.btn:hover{
-  background:rgba(255,211,111,.12);
-  box-shadow:0 0 20px rgba(255,211,111,.15);
-}
+    /* hologram sheen */
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(900px 160px at 50% 0%, rgba(255,211,111,.16), transparent 62%),
+        linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent);
+      opacity:.85;
+    }
 
-.law-item{
-  display:flex;
-  gap:10px;
-  padding:10px;
-  border:1px solid var(--line2);
-  border-radius:12px;
-  margin-bottom:8px;
-  background:rgba(255,255,255,.03);
-}
-.law-item:hover{
-  border-color:rgba(255,211,111,.35);
-  background:rgba(255,211,111,.08);
-}
+    .hd{
+      padding:14px 14px 12px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), transparent);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+    .hd h2{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.28px;
+      text-transform:uppercase;
+      color: rgba(255,246,230,.92);
+    }
+    .bd{
+      padding:14px;
+      position:relative;
+      z-index:1;
+    }
 
-.pill{
-  font-size:11px;
-  padding:2px 8px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.18);
-  display:inline-block;
-  margin-top:6px;
-}
+    .grid2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .grid2{grid-template-columns:1fr}
+    }
 
-.tier1{background:rgba(255,230,160,.18)}
-.tier2{background:rgba(255,210,120,.18)}
-.tier3{background:rgba(255,170,90,.18)}
-.tier4{background:rgba(255,140,70,.18)}
-.tier5{background:rgba(255,110,60,.18)}
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px;
+    }
 
-.output{
-  min-height:260px;
-  font-family:monospace;
-}
-</style>
+    input[type="text"], input[type="date"], textarea{
+      width:100%;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--line2);
+      outline:none;
+      background: rgba(0,0,0,.22);
+      color:var(--text);
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .06s ease;
+      box-shadow: var(--soft);
+    }
+    textarea{ min-height:100px; resize:vertical; }
+
+    input:focus, textarea:focus{
+      border-color: rgba(255,211,111,.55);
+      box-shadow: 0 0 0 4px rgba(255,211,111,.14);
+      background: rgba(0,0,0,.30);
+    }
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .search{
+      flex:1 1 260px;
+      max-width:620px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--line2);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:13px;
+      transition: transform .06s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+      user-select:none;
+      white-space:nowrap;
+      box-shadow: var(--soft);
+    }
+    .btn:hover{
+      background: rgba(255,211,111,.10);
+      border-color: rgba(255,215,140,.30);
+      box-shadow: 0 0 26px rgba(255,211,111,.12);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .btn.primary{
+      border-color: rgba(255,211,111,.50);
+      background: linear-gradient(180deg, rgba(255,211,111,.24), rgba(255,211,111,.10));
+    }
+    .btn.primary:hover{
+      background: linear-gradient(180deg, rgba(255,211,111,.34), rgba(255,211,111,.14));
+    }
+    .btn.danger{
+      border-color: rgba(255,107,138,.45);
+      background: linear-gradient(180deg, rgba(255,107,138,.20), rgba(255,107,138,.10));
+    }
+    .btn.danger:hover{
+      box-shadow: 0 0 26px rgba(255,107,138,.12);
+    }
+
+    .section{
+      margin-top:14px;
+      border-top:1px dashed rgba(255,215,140,.22);
+      padding-top:14px;
+    }
+
+    /* ===== Laws Panel ===== */
+    .lawbox{
+      margin-top:10px;
+      border:1px solid var(--line2);
+      border-radius:18px;
+      overflow:hidden;
+      background: rgba(0,0,0,.12);
+      box-shadow: var(--soft);
+    }
+
+    .lawboxHd{
+      padding:12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(255,255,255,.04);
+      border-bottom:1px solid var(--line2);
+    }
+
+    .lawboxTitle{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight:950;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+
+    .chip{
+      font-size:11px;
+      padding:3px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,215,140,.26);
+      background: rgba(255,211,111,.08);
+      color: rgba(255,240,194,.95);
+      white-space:nowrap;
+    }
+
+    .lawlist{
+      max-height:440px;
+      overflow:auto;
+      padding:10px;
+      display:grid;
+      gap:10px;
+    }
+    .lawlist::-webkit-scrollbar{height:10px;width:10px}
+    .lawlist::-webkit-scrollbar-thumb{background: rgba(255,215,140,.24); border-radius:999px}
+    .lawlist::-webkit-scrollbar-track{background: rgba(0,0,0,.15)}
+
+    .law-item{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      background: rgba(255,255,255,.03);
+      transition: background .18s ease, border-color .18s ease, transform .08s ease, box-shadow .18s ease;
+      cursor:pointer;
+    }
+    .law-item:hover{
+      border-color: rgba(255,211,111,.30);
+      background: rgba(255,211,111,.07);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(0,0,0,.20);
+    }
+
+    /* checkbox (pretty) */
+    .law-item input{
+      position:absolute;
+      opacity:0;
+      pointer-events:none;
+    }
+    .check{
+      width:22px;height:22px;
+      border-radius:9px;
+      border:2px solid rgba(255,211,111,.75);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-top:1px;
+      flex:0 0 auto;
+      transition: background .18s ease, box-shadow .18s ease, border-color .18s ease;
+      background: rgba(0,0,0,.10);
+    }
+    .check::after{
+      content:"✔";
+      font-weight:1000;
+      color:#1a1206;
+      transform: scale(0);
+      transition: transform .14s ease;
+    }
+    .law-item input:checked + .check{
+      background: var(--gold);
+      border-color: rgba(255,240,194,.92);
+      box-shadow: 0 0 18px rgba(255,211,111,.35);
+    }
+    .law-item input:checked + .check::after{ transform: scale(1); }
+
+    .meta{ min-width:0; display:flex; flex-direction:column; gap:6px; flex:1; }
+    .topline{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .law-title{
+      font-size:13px;
+      font-weight:950;
+      letter-spacing:.1px;
+    }
+    .law-desc{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .pill{
+      font-size:11px;
+      padding:3px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.16);
+      white-space:nowrap;
+    }
+    .tier1{ border-color: rgba(255,240,194,.26); background: rgba(255,230,160,.16); }
+    .tier2{ border-color: rgba(255,240,194,.22); background: rgba(255,210,120,.16); }
+    .tier3{ border-color: rgba(255,210,120,.18); background: rgba(255,170,90,.16); }
+    .tier4{ border-color: rgba(255,170,90,.18); background: rgba(255,140,70,.16); }
+    .tier5{ border-color: rgba(255,140,70,.18); background: rgba(255,110,60,.16); }
+
+    .output{
+      width:100%;
+      min-height:290px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      line-height:1.5;
+      background: rgba(0,0,0,.30);
+      border:1px solid var(--line2);
+      border-radius:16px;
+      padding:12px;
+      box-shadow: var(--soft);
+    }
+
+    #toast{
+      position:fixed;
+      bottom:18px;
+      left:50%;
+      transform:translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border:1px solid rgba(255,215,140,.22);
+      padding:10px 14px;
+      border-radius:999px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      color: rgba(255,240,194,.95);
+      z-index:99;
+    }
+    #toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(-2px);
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="titlebar">
+      <h1>
+        Jedi Law Report Generator
+        <span class="badge">Council Archive</span>
+      </h1>
+      <span class="badge" id="selectedHint">0 laws selected</span>
+    </div>
+    <p class="sub">Select the law(s), enter details, then generate a formatted Jedi Order report. (All laws are the new set you provided.)</p>
+  </header>
 
-<header>
-  <h1>Jedi Law Report Generator</h1>
-  <p class="sub">Jedi Order Archive — generate official law reports.</p>
-</header>
+  <main class="wrap">
+    <!-- LEFT -->
+    <section class="card">
+      <div class="hd">
+        <h2>Case Details</h2>
+        <span class="badge" id="tiersBadge">Tier(s): —</span>
+      </div>
 
-<main class="wrap">
+      <div class="bd">
+        <div class="grid2">
+          <div>
+            <label for="arrester">Arrester username</label>
+            <input id="arrester" type="text" placeholder="e.g. GuardianOne" />
+          </div>
+          <div>
+            <label for="arresterRank">Arrester rank</label>
+            <input id="arresterRank" type="text" placeholder="e.g. Jedi Knight / Master" />
+          </div>
+          <div>
+            <label for="username">Law evader username</label>
+            <input id="username" type="text" placeholder="e.g. RoguePadawan" />
+          </div>
+          <div>
+            <label for="rank">Law evader rank</label>
+            <input id="rank" type="text" placeholder="e.g. Padawan / Knight" />
+          </div>
+          <div>
+            <label for="eventDate">Date of the event</label>
+            <input id="eventDate" type="date" />
+          </div>
+          <div>
+            <label for="tiersPreview">Tier(s) (auto)</label>
+            <input id="tiersPreview" type="text" readonly placeholder="Select laws to fill..." />
+          </div>
+        </div>
 
-<section class="card">
-<div class="hd"><b>Case Details</b></div>
-<div class="bd">
+        <div class="section">
+          <div class="toolbar">
+            <div class="search">
+              <label for="lawSearch">Search laws</label>
+              <input id="lawSearch" type="text" placeholder="Search by code or name (e.g. T3JL-8, Toxicity, Murder)" />
+            </div>
+            <div class="row">
+              <button class="btn" id="selectAllBtn" type="button">Select visible</button>
+              <button class="btn danger" id="clearBtn" type="button">Clear</button>
+            </div>
+          </div>
 
-<label>Arrester username</label>
-<input id="arrester">
+          <div class="lawbox">
+            <div class="lawboxHd">
+              <div class="lawboxTitle">
+                <span>Jedi Order Law</span>
+                <span class="chip" id="shownCount">0 shown</span>
+              </div>
+              <span class="chip" id="totalCount">0 total</span>
+            </div>
+            <div class="lawlist" id="lawList"></div>
+          </div>
 
-<label>Arrester rank</label>
-<input id="arresterRank">
+          <div class="section">
+            <div class="grid2">
+              <div>
+                <label for="summary">Summary of event</label>
+                <textarea id="summary" placeholder="Write what happened, in plain language..."></textarea>
+              </div>
+              <div>
+                <label for="evidence">Evidence</label>
+                <textarea id="evidence" placeholder="Links, screenshots, witnesses, logs, etc..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<label>Law evader username</label>
-<input id="username">
+    <!-- RIGHT -->
+    <section class="card">
+      <div class="hd">
+        <h2>Generated Message</h2>
+        <div class="row">
+          <button class="btn primary" id="genBtn" type="button">Generate</button>
+          <button class="btn" id="copyBtn" type="button">Copy</button>
+        </div>
+      </div>
+      <div class="bd">
+        <label for="output">Output</label>
+        <textarea id="output" class="output" readonly placeholder="Click “Generate”..."></textarea>
+        <div class="hint" style="margin-top:10px">GitHub Pages friendly: everything is contained in this single file.</div>
+      </div>
+    </section>
+  </main>
 
-<label>Law evader rank</label>
-<input id="rank">
+  <div id="toast">Copied</div>
 
-<label>Date of the event</label>
-<input id="eventDate" type="date">
+  <script>
+    // ===== Only the NEW Jedi laws you provided =====
+    const LAWS = [
+      // Tier I — Minor Infractions
+      { code:"T1JL-1", name:"Insufficient Avatar", tier:"Tier I", desc:"Using an avatar that breaks immersion or does not follow Jedi or server appearance standards." },
+      { code:"T1JL-2", name:"Unofficially Sanctioned Combat", tier:"Tier I", desc:"Engaging in combat without consent or proper escalation. Jedi are expected to avoid unnecessary conflict." },
+      { code:"T1JL-3", name:"Breach of Peace", tier:"Tier I", desc:"Causing unnecessary disruption or conflict in areas meant to remain calm or peaceful." },
+      { code:"T1JL-4", name:"Restricted Ignition", tier:"Tier I", desc:"Igniting a lightsaber in safe zones or without proper escalation. Ignition may be treated as a threat." },
 
-<h3>Jedi Order Law</h3>
-<div id="lawList"></div>
+      // Tier II — Moderate Infractions
+      { code:"T2JL-1", name:"Trespassing", tier:"Tier II", desc:"Entering restricted Temple or Order areas without permission." },
+      { code:"T2JL-2", name:"Battery", tier:"Tier II", desc:"Using physical force against another person without proper escalation." },
+      { code:"T2JL-3", name:"Repetition of Tier I Offenses", tier:"Tier II", desc:"Continuing Tier I infractions after warnings or prior punishment." },
+      { code:"T2JL-4", name:"Aiding and Abetting / Assistance of a Crime", tier:"Tier II", desc:"Helping or supporting someone while they commit a rule violation or crime." },
+      { code:"T2JL-5", name:"Identity Theft / Impersonation", tier:"Tier II", desc:"Pretending to be another player or falsely claiming a rank or position you do not have." },
+      { code:"T2JL-6", name:"Law of Crystals", tier:"Tier II", desc:"Kyber crystals must be earned through proper progression. Switching factions to obtain a new crystal may result in rank lock." },
 
-<label>Summary</label>
-<textarea id="summary"></textarea>
+      // Tier III — Major Infractions
+      { code:"T3JL-1", name:"Attempted Murder", tier:"Tier III", desc:"Attempting to intentionally kill another person but failing or being stopped." },
+      { code:"T3JL-2", name:"Minor Toxicity", tier:"Tier III", desc:"Disrespectful or hostile behavior that negatively affects others or the RP environment." },
+      { code:"T3JL-3", name:"Attempted Murder (Aggravated)", tier:"Tier III", desc:"Repeated or deliberate attempts to kill another person." },
+      { code:"T3JL-4", name:"2nd Degree Murder", tier:"Tier III", desc:"Killing another person without planning but through intentional violence." },
+      { code:"T3JL-5", name:"Improper Representation", tier:"Tier III", desc:"Misusing or falsely claiming Jedi authority, rank, or responsibilities." },
+      { code:"T3JL-6", name:"Repetition of Tier II Offenses", tier:"Tier III", desc:"Continuing Tier II violations after prior punishment." },
+      { code:"T3JL-7", name:"Minor Admin Abuse", tier:"Tier III", desc:"Small misuse of admin or moderator permissions." },
+      { code:"T3JL-8", name:"Circumvention of Arrest", tier:"Tier III", desc:"Avoiding arrest or consequences through exploits, combat logging, or rule-breaking." },
+      { code:"T3JL-9", name:"Mass Assault", tier:"Tier III", desc:"Attacking multiple people without proper escalation." },
+      { code:"T3JL-10", name:"Abuse of Authority", tier:"Tier III", desc:"Using Jedi rank or authority to threaten, control, or gain unfair advantage over others." },
 
-<label>Evidence</label>
-<textarea id="evidence"></textarea>
+      // Tier IV — Severe Infractions
+      { code:"T4JL-1", name:"1st Degree Murder", tier:"Tier IV", desc:"Planned and intentional killing of another person." },
+      { code:"T4JL-2", name:"Major Toxicity", tier:"Tier IV", desc:"Severe harassment, threats, or behavior that seriously harms the community or RP environment." },
+      { code:"T4JL-3", name:"Repetition of Tier III Offenses", tier:"Tier IV", desc:"Continuing major violations after prior punishment." },
+      { code:"T4JL-4", name:"Major Admin Abuse", tier:"Tier IV", desc:"Serious misuse of admin powers that affects fairness or gameplay." },
+      { code:"T4JL-5", name:"Protected Identity Disclosure", tier:"Tier IV", desc:"Revealing or attempting to reveal the identity of Jedi Temple Guards or other protected roles." },
+      { code:"T4JL-6", name:"Exploit Abuse", tier:"Tier IV", desc:"Using glitches, exploits, or unintended mechanics to gain advantage or avoid consequences." },
 
-<button class="btn" onclick="generate()">Generate</button>
+      // Tier V — Extreme Infractions
+      { code:"T5JL-1", name:"Mass Murder", tier:"Tier V", desc:"Intentionally killing multiple people in a single incident." },
+      { code:"T5JL-2", name:"Murder of a JHC Official", tier:"Tier V", desc:"Intentionally killing a Jedi High Council official outside permitted scenarios." },
+      { code:"T5JL-3", name:"Assassination", tier:"Tier V", desc:"Planned and targeted killing of a specific individual." },
+    ];
 
-</div>
-</section>
+    const tierOrder = ["Tier I","Tier II","Tier III","Tier IV","Tier V"];
+    const selectedSet = new Set();
 
-<section class="card">
-<div class="hd"><b>Generated Message</b></div>
-<div class="bd">
-<textarea id="output" class="output" readonly></textarea>
-</div>
-</section>
+    const $ = (id) => document.getElementById(id);
 
-</main>
-
-<script>
-const LAWS=[
-{code:"T1JL-1",name:"Insufficient Avatar",tier:"Tier I"},
-{code:"T1JL-2",name:"Unofficially Sanctioned Combat",tier:"Tier I"},
-{code:"T1JL-3",name:"Breach of Peace",tier:"Tier I"},
-{code:"T1JL-4",name:"Restricted Ignition",tier:"Tier I"},
-
-{code:"T2JL-1",name:"Trespassing",tier:"Tier II"},
-{code:"T2JL-2",name:"Battery",tier:"Tier II"},
-{code:"T2JL-3",name:"Repetition of Tier I Offenses",tier:"Tier II"},
-{code:"T2JL-4",name:"Aiding and Abetting / Assistance of a Crime",tier:"Tier II"},
-{code:"T2JL-5",name:"Identity Theft / Impersonation",tier:"Tier II"},
-{code:"T2JL-6",name:"Law of Crystals",tier:"Tier II"},
-
-{code:"T3JL-1",name:"Attempted Murder",tier:"Tier III"},
-{code:"T3JL-2",name:"Minor Toxicity",tier:"Tier III"},
-{code:"T3JL-3",name:"Attempted Murder (Aggravated)",tier:"Tier III"},
-{code:"T3JL-4",name:"2nd Degree Murder",tier:"Tier III"},
-{code:"T3JL-5",name:"Improper Representation",tier:"Tier III"},
-{code:"T3JL-6",name:"Repetition of Tier II Offenses",tier:"Tier III"},
-{code:"T3JL-7",name:"Minor Admin Abuse",tier:"Tier III"},
-{code:"T3JL-8",name:"Circumvention of Arrest",tier:"Tier III"},
-{code:"T3JL-9",name:"Mass Assault",tier:"Tier III"},
-{code:"T3JL-10",name:"Abuse of Authority",tier:"Tier III"},
-
-{code:"T4JL-1",name:"1st Degree Murder",tier:"Tier IV"},
-{code:"T4JL-2",name:"Major Toxicity",tier:"Tier IV"},
-{code:"T4JL-3",name:"Repetition of Tier III Offenses",tier:"Tier IV"},
-{code:"T4JL-4",name:"Major Admin Abuse",tier:"Tier IV"},
-{code:"T4JL-5",name:"Protected Identity Disclosure",tier:"Tier IV"},
-{code:"T4JL-6",name:"Exploit Abuse",tier:"Tier IV"},
-
-{code:"T5JL-1",name:"Mass Murder",tier:"Tier V"},
-{code:"T5JL-2",name:"Murder of a JHC Official",tier:"Tier V"},
-{code:"T5JL-3",name:"Assassination",tier:"Tier V"},
-];
-
-const lawList=document.getElementById("lawList");
-
-// set today's date
-(function(){
-  const d=new Date();
-  const yyyy=d.getFullYear();
-  const mm=String(d.getMonth()+1).padStart(2,"0");
-  const dd=String(d.getDate()).padStart(2,"0");
-  document.getElementById("eventDate").value=`${yyyy}-${mm}-${dd}`;
-})();
-
-LAWS.forEach(l=>{
-  const row=document.createElement("div");
-  row.className="law-item";
-  row.innerHTML=`
-    <input type="checkbox">
-    <div>
-      <b>${l.code}: ${l.name}</b><br>
-      <span class="pill ${l.tier.toLowerCase().replace(" ","")}">${l.tier}</span>
-    </div>`;
-  lawList.appendChild(row);
-});
-
-function generate(){
-  const selected=[];
-  document.querySelectorAll(".law-item").forEach((row,i)=>{
-    if(row.querySelector("input").checked){
-      selected.push(LAWS[i].code+": "+LAWS[i].name);
+    function tierClass(t){
+      if (t === "Tier I") return "tier1";
+      if (t === "Tier II") return "tier2";
+      if (t === "Tier III") return "tier3";
+      if (t === "Tier IV") return "tier4";
+      if (t === "Tier V") return "tier5";
+      return "";
     }
-  });
 
-  output.value=
-`Arrester username: ${arrester.value}
-Arrester rank: ${arresterRank.value}
-Law evader username: ${username.value}
-Law evader rank: ${rank.value}
-Date of the event: ${eventDate.value}
-Law(s) broken: ${selected.join("; ")}
-Summary: ${summary.value}
-Evidence: ${evidence.value}`;
-}
-</script>
+    function unique(arr){ return [...new Set(arr)]; }
 
+    function showToast(text){
+      const t = $("toast");
+      t.textContent = text;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 1100);
+    }
+
+    function updateSelections(){
+      const selected = LAWS.filter(l => selectedSet.has(l.code));
+      $("selectedHint").textContent = `${selected.length} laws selected`;
+
+      const tiers = unique(selected.map(l => l.tier))
+        .sort((a,b)=>tierOrder.indexOf(a)-tierOrder.indexOf(b));
+
+      $("tiersPreview").value = tiers.join(", ");
+      $("tiersBadge").textContent = `Tier(s): ${tiers.length ? tiers.join(", ") : "—"}`;
+    }
+
+    function renderList(filterText=""){
+      const q = filterText.trim().toLowerCase();
+      const list = $("lawList");
+      list.innerHTML = "";
+
+      const filtered = LAWS.filter(l => {
+        if (!q) return true;
+        return (
+          l.code.toLowerCase().includes(q) ||
+          l.name.toLowerCase().includes(q) ||
+          l.desc.toLowerCase().includes(q) ||
+          l.tier.toLowerCase().includes(q)
+        );
+      });
+
+      $("shownCount").textContent = `${filtered.length} shown`;
+      $("totalCount").textContent = `${LAWS.length} total`;
+
+      for (const law of filtered){
+        const row = document.createElement("div");
+        row.className = "law-item";
+        row.innerHTML = `
+          <input type="checkbox" data-code="${law.code}">
+          <div class="check" aria-hidden="true"></div>
+          <div class="meta">
+            <div class="topline">
+              <div class="law-title">${law.code}: ${law.name}</div>
+              <div class="pill ${tierClass(law.tier)}">${law.tier}</div>
+            </div>
+            <div class="law-desc">${law.desc}</div>
+          </div>
+        `;
+
+        const cb = row.querySelector('input[type="checkbox"]');
+        cb.checked = selectedSet.has(law.code);
+
+        // clicking the row toggles
+        row.addEventListener("click", () => {
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event("change", { bubbles:true }));
+        });
+
+        cb.addEventListener("change", () => {
+          if (cb.checked) selectedSet.add(law.code);
+          else selectedSet.delete(law.code);
+          updateSelections();
+        });
+
+        list.appendChild(row);
+      }
+
+      updateSelections();
+    }
+
+    function formatLawsLine(selected){
+      return selected.map(l => `${l.code}: ${l.name}`).join("; ");
+    }
+
+    function generateMessage(){
+      const arrester = $("arrester").value.trim();
+      const arresterRank = $("arresterRank").value.trim();
+      const username = $("username").value.trim();
+      const rank = $("rank").value.trim();
+      const date = $("eventDate").value;
+      const summary = $("summary").value.trim();
+      const evidence = $("evidence").value.trim();
+
+      const selected = LAWS.filter(l => selectedSet.has(l.code));
+      const tiers = unique(selected.map(l=>l.tier)).sort((a,b)=>tierOrder.indexOf(a)-tierOrder.indexOf(b));
+
+      const msg =
+`Arrester username: ${arrester}
+Arrester rank: ${arresterRank}
+Law evader username: ${username}
+Law evader rank: ${rank}
+Date of the event: ${date}
+Law(s) broken: ${formatLawsLine(selected)}
+Tier(s): ${tiers.join(", ")}
+Summary of event: ${summary}
+Evidence: ${evidence}`.trimEnd();
+
+      $("output").value = msg;
+      showToast("Report generated");
+    }
+
+    async function copyOutput(){
+      const text = $("output").value;
+      if (!text) return;
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("Copied to clipboard");
+      }catch{
+        $("output").focus();
+        $("output").select();
+        document.execCommand("copy");
+        showToast("Copied (fallback)");
+      }
+    }
+
+    function clearAll(){
+      selectedSet.clear();
+      $("arrester").value = "";
+      $("arresterRank").value = "";
+      $("username").value = "";
+      $("rank").value = "";
+      $("summary").value = "";
+      $("evidence").value = "";
+      $("output").value = "";
+      $("lawSearch").value = "";
+      renderList("");
+      showToast("Cleared");
+    }
+
+    function selectVisible(){
+      document.querySelectorAll('input[type="checkbox"][data-code]').forEach(cb => {
+        cb.checked = true;
+        selectedSet.add(cb.dataset.code);
+      });
+      updateSelections();
+      renderList($("lawSearch").value);
+      showToast("Selected visible");
+    }
+
+    // wire up
+    $("genBtn").addEventListener("click", generateMessage);
+    $("copyBtn").addEventListener("click", copyOutput);
+    $("clearBtn").addEventListener("click", clearAll);
+    $("selectAllBtn").addEventListener("click", selectVisible);
+
+    $("lawSearch").addEventListener("input", (e) => renderList(e.target.value));
+
+    // set date to today
+    (function setToday(){
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      $("eventDate").value = `${yyyy}-${mm}-${dd}`;
+    })();
+
+    // init
+    renderList("");
+  </script>
 </body>
 </html>
