@@ -54,7 +54,7 @@
       background:
         radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,.7) 40%, transparent 42%),
         radial-gradient(1px 1px at 82% 18%, rgba(255,255,255,.55) 40%, transparent 42%),
-        radial-gradient(1px 1px at 64% 70%, rgba(255,255,255,.45) 40%, transparent 42%),
+        radial-gradient(1px 1px at 64% 70%, rgba(255,255255,255,.45) 40%, transparent 42%),
         radial-gradient(1px 1px at 25% 78%, rgba(255,255,255,.55) 40%, transparent 42%),
         radial-gradient(1px 1px at 48% 44%, rgba(255,255,255,.40) 40%, transparent 42%),
         radial-gradient(1px 1px at 92% 62%, rgba(255,255,255,.35) 40%, transparent 42%);
@@ -316,6 +316,42 @@
     .lawlist::-webkit-scrollbar-thumb{background: rgba(255,215,140,.24); border-radius:999px}
     .lawlist::-webkit-scrollbar-track{background: rgba(0,0,0,.15)}
 
+    /* ===== Tier Section Divider ===== */
+    .tier-divider{
+      position:relative;
+      margin:14px 6px 6px;
+      padding:6px 0 8px;
+      font-weight:950;
+      letter-spacing:.35px;
+      font-size:12px;
+      color:var(--gold2);
+      text-transform:uppercase;
+    }
+    .tier-divider::before{
+      content:"";
+      position:absolute;
+      left:0; right:0;
+      top:50%;
+      height:1px;
+      background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,211,111,.35),
+        rgba(255,211,111,.60),
+        rgba(255,211,111,.35),
+        transparent
+      );
+    }
+    .tier-divider span{
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      padding:0 10px;
+      position:relative;
+      z-index:1;
+      box-shadow:0 0 12px rgba(255,211,111,.15);
+      border-radius:8px;
+      border:1px solid rgba(255,215,140,.12);
+    }
+
     .law-item{
       display:flex;
       gap:12px;
@@ -444,7 +480,7 @@
       </h1>
       <span class="badge" id="selectedHint">0 laws selected</span>
     </div>
-    <p class="sub">Select the law(s), enter details, then generate a formatted Jedi Order report. (All laws are the new set you provided.)</p>
+    <p class="sub">Select the law(s), enter details, then generate a formatted Jedi Order report. Laws are shown sorted by Tier.</p>
   </header>
 
   <main class="wrap">
@@ -542,15 +578,12 @@
   <div id="toast">Copied</div>
 
   <script>
-    // ===== Only the NEW Jedi laws you provided =====
     const LAWS = [
-      // Tier I — Minor Infractions
       { code:"T1JL-1", name:"Insufficient Avatar", tier:"Tier I", desc:"Using an avatar that breaks immersion or does not follow Jedi or server appearance standards." },
       { code:"T1JL-2", name:"Unofficially Sanctioned Combat", tier:"Tier I", desc:"Engaging in combat without consent or proper escalation. Jedi are expected to avoid unnecessary conflict." },
       { code:"T1JL-3", name:"Breach of Peace", tier:"Tier I", desc:"Causing unnecessary disruption or conflict in areas meant to remain calm or peaceful." },
       { code:"T1JL-4", name:"Restricted Ignition", tier:"Tier I", desc:"Igniting a lightsaber in safe zones or without proper escalation. Ignition may be treated as a threat." },
 
-      // Tier II — Moderate Infractions
       { code:"T2JL-1", name:"Trespassing", tier:"Tier II", desc:"Entering restricted Temple or Order areas without permission." },
       { code:"T2JL-2", name:"Battery", tier:"Tier II", desc:"Using physical force against another person without proper escalation." },
       { code:"T2JL-3", name:"Repetition of Tier I Offenses", tier:"Tier II", desc:"Continuing Tier I infractions after warnings or prior punishment." },
@@ -558,7 +591,6 @@
       { code:"T2JL-5", name:"Identity Theft / Impersonation", tier:"Tier II", desc:"Pretending to be another player or falsely claiming a rank or position you do not have." },
       { code:"T2JL-6", name:"Law of Crystals", tier:"Tier II", desc:"Kyber crystals must be earned through proper progression. Switching factions to obtain a new crystal may result in rank lock." },
 
-      // Tier III — Major Infractions
       { code:"T3JL-1", name:"Attempted Murder", tier:"Tier III", desc:"Attempting to intentionally kill another person but failing or being stopped." },
       { code:"T3JL-2", name:"Minor Toxicity", tier:"Tier III", desc:"Disrespectful or hostile behavior that negatively affects others or the RP environment." },
       { code:"T3JL-3", name:"Attempted Murder (Aggravated)", tier:"Tier III", desc:"Repeated or deliberate attempts to kill another person." },
@@ -570,7 +602,6 @@
       { code:"T3JL-9", name:"Mass Assault", tier:"Tier III", desc:"Attacking multiple people without proper escalation." },
       { code:"T3JL-10", name:"Abuse of Authority", tier:"Tier III", desc:"Using Jedi rank or authority to threaten, control, or gain unfair advantage over others." },
 
-      // Tier IV — Severe Infractions
       { code:"T4JL-1", name:"1st Degree Murder", tier:"Tier IV", desc:"Planned and intentional killing of another person." },
       { code:"T4JL-2", name:"Major Toxicity", tier:"Tier IV", desc:"Severe harassment, threats, or behavior that seriously harms the community or RP environment." },
       { code:"T4JL-3", name:"Repetition of Tier III Offenses", tier:"Tier IV", desc:"Continuing major violations after prior punishment." },
@@ -578,7 +609,6 @@
       { code:"T4JL-5", name:"Protected Identity Disclosure", tier:"Tier IV", desc:"Revealing or attempting to reveal the identity of Jedi Temple Guards or other protected roles." },
       { code:"T4JL-6", name:"Exploit Abuse", tier:"Tier IV", desc:"Using glitches, exploits, or unintended mechanics to gain advantage or avoid consequences." },
 
-      // Tier V — Extreme Infractions
       { code:"T5JL-1", name:"Mass Murder", tier:"Tier V", desc:"Intentionally killing multiple people in a single incident." },
       { code:"T5JL-2", name:"Murder of a JHC Official", tier:"Tier V", desc:"Intentionally killing a Jedi High Council official outside permitted scenarios." },
       { code:"T5JL-3", name:"Assassination", tier:"Tier V", desc:"Planned and targeted killing of a specific individual." },
@@ -586,8 +616,16 @@
 
     const tierOrder = ["Tier I","Tier II","Tier III","Tier IV","Tier V"];
     const selectedSet = new Set();
-
     const $ = (id) => document.getElementById(id);
+
+    function showToast(text){
+      const t = $("toast");
+      t.textContent = text;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 1100);
+    }
+
+    function unique(arr){ return [...new Set(arr)]; }
 
     function tierClass(t){
       if (t === "Tier I") return "tier1";
@@ -596,15 +634,6 @@
       if (t === "Tier IV") return "tier4";
       if (t === "Tier V") return "tier5";
       return "";
-    }
-
-    function unique(arr){ return [...new Set(arr)]; }
-
-    function showToast(text){
-      const t = $("toast");
-      t.textContent = text;
-      t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"), 1100);
     }
 
     function updateSelections(){
@@ -618,12 +647,18 @@
       $("tiersBadge").textContent = `Tier(s): ${tiers.length ? tiers.join(", ") : "—"}`;
     }
 
+    function codeSortKey(code){
+      const m = String(code).match(/^T(\d+)JL-(\d+)$/i);
+      if (!m) return [999, 999];
+      return [parseInt(m[1], 10), parseInt(m[2], 10)];
+    }
+
     function renderList(filterText=""){
       const q = filterText.trim().toLowerCase();
       const list = $("lawList");
       list.innerHTML = "";
 
-      const filtered = LAWS.filter(l => {
+      let filtered = LAWS.filter(l => {
         if (!q) return true;
         return (
           l.code.toLowerCase().includes(q) ||
@@ -633,10 +668,31 @@
         );
       });
 
+      filtered.sort((a,b) => {
+        const ta = tierOrder.indexOf(a.tier);
+        const tb = tierOrder.indexOf(b.tier);
+        if (ta !== tb) return ta - tb;
+
+        const [aT, aN] = codeSortKey(a.code);
+        const [bT, bN] = codeSortKey(b.code);
+        if (aT !== bT) return aT - bT;
+        return aN - bN;
+      });
+
       $("shownCount").textContent = `${filtered.length} shown`;
       $("totalCount").textContent = `${LAWS.length} total`;
 
+      let currentTier = null;
+
       for (const law of filtered){
+        if (law.tier !== currentTier){
+          currentTier = law.tier;
+          const header = document.createElement("div");
+          header.className = "tier-divider";
+          header.innerHTML = `<span>${currentTier}</span>`;
+          list.appendChild(header);
+        }
+
         const row = document.createElement("div");
         row.className = "law-item";
         row.innerHTML = `
@@ -654,7 +710,6 @@
         const cb = row.querySelector('input[type="checkbox"]');
         cb.checked = selectedSet.has(law.code);
 
-        // clicking the row toggles
         row.addEventListener("click", () => {
           cb.checked = !cb.checked;
           cb.dispatchEvent(new Event("change", { bubbles:true }));
@@ -746,7 +801,6 @@ Evidence: ${evidence}`.trimEnd();
     $("copyBtn").addEventListener("click", copyOutput);
     $("clearBtn").addEventListener("click", clearAll);
     $("selectAllBtn").addEventListener("click", selectVisible);
-
     $("lawSearch").addEventListener("input", (e) => renderList(e.target.value));
 
     // set date to today
